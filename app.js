@@ -96,30 +96,26 @@ function initRecognition() {
   recognition.lang = recLang; // Start with German as default
 
   recognition.onresult = async function(event) {
+    let interimTranscripts = '';
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       const res = event.results[i];
-      let txt = res[0].transcript.trim();
-      
-      // Always treat language as German, no detection change
+      const txt = res[0].transcript.trim();
+  
       if (res.isFinal) {
         transcription.push(txt);
-        subtitles.textContent = transcription.join('\n');
-        // Always translate German to English
+        // Always translate German to English on finalized text
         const translated = await translateText(txt, 'de', 'en');
         translation.push(translated);
-        translations.textContent = translation.join('\n');
       } else {
-        // Show interim result appended after final text
-        subtitles.textContent = transcription.join('\n') + '\n' + txt;
+        interimTranscripts += txt + ' ';
       }
     }
-
-    // For real-time effect, update transcript
-    if (event.results[event.results.length - 1]) {
-      const interim = event.results[event.results.length - 1][0].transcript;
-      subtitles.textContent = transcription.join('\n') + '\n' + interim;
-    }
+  
+    // Update UI just once per result event to avoid flicker
+    subtitles.textContent = transcription.join('\n') + (interimTranscripts ? '\n' + interimTranscripts.trim() : '');
+    translations.textContent = translation.join('\n');
   };
+
 
 
   recognition.onerror = function(ev) {
@@ -148,6 +144,7 @@ async function translateText(text, from, to) {
     return '[Translation error]';
   }
 }
+
 
 
 
