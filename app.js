@@ -147,24 +147,20 @@ function initRecognition() {
 }
 
 // LibreTranslate API for translation (de→en)
-async function translateText(text, from, to) {
+async function translateText(text, from = 'auto', to = 'en') {
   if (!text || !text.trim()) return '';
   try {
-    const params = new URLSearchParams();
-    params.append('q', text);
-    params.append('source', from);   // 'de'
-    params.append('target', to);     // 'en'
-    params.append('format', 'text');
-    // params.append('api_key', 'YOUR_KEY'); // some instances require this
-
-    const resp = await fetch('https://libretranslate.de/translate', {
+    const resp = await fetch('https://libretranslate.com/translate', {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'Mozilla/5.0'
-      },
-      body: params.toString()
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        q: text,
+        source: from,      // 'auto' or 'de'
+        target: to,        // 'en'
+        format: 'text',
+        alternatives: 1,   // optional; set to 3 if you want more
+        api_key: ''        // optional; required on some instances
+      })
     });
 
     if (!resp.ok) {
@@ -178,3 +174,4 @@ async function translateText(text, from, to) {
     return '[Translation error]';
   }
 }
+
