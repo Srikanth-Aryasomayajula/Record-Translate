@@ -148,32 +148,33 @@ function initRecognition() {
 
 // LibreTranslate API for translation (de→en)
 async function translateText(text, from, to) {
-  if (text.trim().length < 1) return '';
+  if (!text || !text.trim()) return '';
   try {
+    const params = new URLSearchParams();
+    params.append('q', text);
+    params.append('source', from);   // 'de'
+    params.append('target', to);     // 'en'
+    params.append('format', 'text');
+    // params.append('api_key', 'YOUR_KEY'); // some instances require this
+
     const resp = await fetch('https://libretranslate.de/translate', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'Mozilla/5.0'
       },
-      // Use plain JSON per docs; change endpoint to libretranslate.de if .com rate-limits
-      body: JSON.stringify({ q: text, source: from, target: to, format: 'text' })
+      body: params.toString()
     });
 
     if (!resp.ok) {
-      const body = await resp.text().catch(() => '');
-      console.error('Translate HTTP error', resp.status, body);
+      console.error('Translate HTTP error', resp.status, await resp.text().catch(() => ''));
       return '[Translation failed]';
     }
-
     const data = await resp.json();
-    // Some deployments return { translatedText }, others nest differently; guard it
     return (data && data.translatedText) ? data.translatedText : '[No translation]';
   } catch (e) {
     console.error('Translate fetch error', e);
     return '[Translation error]';
   }
 }
-
-
-
