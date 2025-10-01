@@ -151,7 +151,7 @@ function initRecognition() {
 async function translateText(text, from, to) {
   if (text.trim().length < 1) return '';
   try {
-    let resp = await fetch('https://libretranslate.com/translate', {
+    let resp = await fetch('https://libretranslate.de/translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ q: text, source: from, target: to, format: "text" })
@@ -162,3 +162,4 @@ async function translateText(text, from, to) {
     return '[Translation error]';
   }
 }
+
