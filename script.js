@@ -5,6 +5,9 @@ let transcription = [], translation = [];
 let langDetected = '';
 let recLang = 'de-DE'; // start with German as default
 let recording = false;
+let lastAudioAt = Date.now();
+const SIXTY_MIN = 60 * 60 * 1000; // 60 minutes in ms
+let recActive = false; // guards duplicate starts
 
 // Init DOM
 const recordBtn = document.getElementById('recordBtn');
@@ -96,6 +99,7 @@ function initRecognition() {
   recognition.lang = recLang; // Start with German as default
 
   recognition.onresult = async function(event) {
+    lastAudioAt = Date.now();
     // Build one interim string per event to avoid overwrites
     let interimText = '';
   
@@ -136,7 +140,15 @@ function initRecognition() {
   };
 
   recognition.onerror = function(ev) {
-    status.textContent = 'Speech recognition error: ' + ev.error;
+    const silentFor = Date.now() - lastAudioAt;
+    if (silentFor >= SIXTY_MIN) {
+      status.textContent = 'Speech recognition error: ' + ev.error;
+    } else {
+      // Suppress visible errors before 60 min; attempt silent restart
+      if (recording) {
+        try { recognition.stop(); } catch {}
+      }
+    }
   };
 
   recognition.onend = function() {
@@ -174,5 +186,6 @@ async function translateText(text, from = 'auto', to = 'en') {
     return '[Translation error]';
   }
 }
+
 
 
