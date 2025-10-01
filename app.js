@@ -92,7 +92,7 @@ function initRecognition() {
   recognition = new SpeechRecognition();
   recognition.continuous = true;
   recognition.interimResults = true;
-  recognition.lang = 'en-US'; // Start with English as default
+  recognition.lang = 'de-DE'; // Start with German as default
 
   recognition.onresult = async function(event) {
     let final = '';
@@ -152,3 +152,4 @@ async function translateText(text, from, to) {
     return '[Translation error]';
   }
 }
+
