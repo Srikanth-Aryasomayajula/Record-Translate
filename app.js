@@ -113,6 +113,12 @@ function initRecognition() {
         subtitles.textContent = transcription.join('\n') + '\n' + txt;
       }
     }
+
+    // For real-time effect, update transcript
+    if (event.results[event.results.length - 1]) {
+      const interim = event.results[event.results.length - 1][0].transcript;
+      subtitles.textContent = transcription.join('\n') + '\n' + interim;
+    }
   };
 
 
@@ -142,6 +148,7 @@ async function translateText(text, from, to) {
     return '[Translation error]';
   }
 }
+
 
 
 
