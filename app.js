@@ -3,6 +3,7 @@ let chunks = [];
 let recognition;
 let transcription = [], translation = [];
 let langDetected = '';
+let recLang = 'de-DE'; // start with German as default
 let recording = false;
 
 // Init DOM
@@ -152,4 +153,5 @@ async function translateText(text, from, to) {
     return '[Translation error]';
   }
 }
+
 
