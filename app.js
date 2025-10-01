@@ -96,7 +96,7 @@ function initRecognition() {
   recognition.lang = recLang; // Start with German as default
 
   recognition.onresult = async function(event) {
-    // Collect interim text for this event only (not persisted)
+    // Build one interim string per event to avoid overwrites
     let interimText = '';
   
     for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -106,31 +106,34 @@ function initRecognition() {
       if (res.isFinal) {
         // 1) Persist final German text
         transcription.push(txt);
+  
         // 2) Translate this final segment DE -> EN immediately
+        //    Append a placeholder first so UI updates even if translation is slow
+        translation.push('…');
+        const thisIndex = translation.length - 1;
+  
         try {
           const translated = await translateText(txt, 'de', 'en');
-          translation.push(translated);
+          translation[thisIndex] = translated || '[No translation]';
         } catch (e) {
-          translation.push('[Translation error]');
+          translation[thisIndex] = '[Translation error]';
         }
       } else {
-        // Accumulate interim text for display only
+        // Accumulate interim text for display only (not persisted)
         interimText += txt + ' ';
       }
     }
   
     // Update UI exactly once per event:
     // - Subtitles: all final lines + current interim preview
-    subtitles.textContent =
-      transcription.join('\n') + (interimText ? '\n' + interimText.trim() : '');
+    const finals = transcription.join('\n');
+    subtitles.textContent = interimText
+      ? finals + '\n' + interimText.trim()
+      : finals;
   
-    // - Translations: only finalized translated lines
+    // - Translations: only finalized translated lines (same count as transcription)
     translations.textContent = translation.join('\n');
   };
-
-
-
-
 
   recognition.onerror = function(ev) {
     status.textContent = 'Speech recognition error: ' + ev.error;
@@ -147,14 +150,27 @@ function initRecognition() {
 async function translateText(text, from, to) {
   if (text.trim().length < 1) return '';
   try {
-    let resp = await fetch('https://libretranslate.com/translate', {
+    const resp = await fetch('https://libretranslate.com/translate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ q: text, source: from, target: to, format: "text" })
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      // Use plain JSON per docs; change endpoint to libretranslate.de if .com rate-limits
+      body: JSON.stringify({ q: text, source: from, target: to, format: 'text' })
     });
-    let data = await resp.json();
-    return data.translatedText;
+
+    if (!resp.ok) {
+      const body = await resp.text().catch(() => '');
+      console.error('Translate HTTP error', resp.status, body);
+      return '[Translation failed]';
+    }
+
+    const data = await resp.json();
+    // Some deployments return { translatedText }, others nest differently; guard it
+    return (data && data.translatedText) ? data.translatedText : '[No translation]';
   } catch (e) {
+    console.error('Translate fetch error', e);
     return '[Translation error]';
   }
 }
