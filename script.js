@@ -175,3 +175,4 @@ async function translateText(text, from = 'auto', to = 'en') {
   }
 }
 
+
