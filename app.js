@@ -147,30 +147,18 @@ function initRecognition() {
 }
 
 // LibreTranslate API for translation (de→en)
+// LibreTranslate API for translation (de→en)
 async function translateText(text, from, to) {
   if (text.trim().length < 1) return '';
   try {
-    const resp = await fetch('https://libretranslate.com/translate', {
+    let resp = await fetch('https://libretranslate.com/translate', {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      // Use plain JSON per docs; change endpoint to libretranslate.de if .com rate-limits
-      body: JSON.stringify({ q: text, source: from, target: to, format: 'text' })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ q: text, source: from, target: to, format: "text" })
     });
-
-    if (!resp.ok) {
-      const body = await resp.text().catch(() => '');
-      console.error('Translate HTTP error', resp.status, body);
-      return '[Translation failed]';
-    }
-
-    const data = await resp.json();
-    // Some deployments return { translatedText }, others nest differently; guard it
-    return (data && data.translatedText) ? data.translatedText : '[No translation]';
+    let data = await resp.json();
+    return data.translatedText;
   } catch (e) {
-    console.error('Translate fetch error', e);
     return '[Translation error]';
   }
 }
