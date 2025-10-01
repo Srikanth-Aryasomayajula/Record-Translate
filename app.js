@@ -96,36 +96,25 @@ function initRecognition() {
   recognition.lang = recLang; // Start with German as default
 
   recognition.onresult = async function(event) {
-    let final = '';
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       const res = event.results[i];
       let txt = res[0].transcript.trim();
-      // Detect language if enough text
-      if (!langDetected && txt.length > 6) {
-        langDetected = guessLang(txt);
-        recognition.lang = langDetected;
-      }
+      
+      // Always treat language as German, no detection change
       if (res.isFinal) {
         transcription.push(txt);
-        subtitles.textContent += txt + '\n';
-        // Translate non-English to English
-        let toTranslate = langDetected == 'en-US' ? false : true;
-        if (toTranslate) {
-          const translated = await translateText(txt, 'de', 'en');
-          translations.textContent += translated + '\n';
-          translation.push(translated);
-        } else {
-          translations.textContent += txt + '\n'; // Already English
-          translation.push(txt);
-        }
+        subtitles.textContent = transcription.join('\n');
+        // Always translate German to English
+        const translated = await translateText(txt, 'de', 'en');
+        translation.push(translated);
+        translations.textContent = translation.join('\n');
+      } else {
+        // Show interim result appended after final text
+        subtitles.textContent = transcription.join('\n') + '\n' + txt;
       }
     }
-    // For real-time effect, update transcript
-    if (event.results[event.results.length - 1]) {
-      const interim = event.results[event.results.length - 1][0].transcript;
-      subtitles.textContent = transcription.join('\n') + '\n' + interim;
-    }
   };
+
 
   recognition.onerror = function(ev) {
     status.textContent = 'Speech recognition error: ' + ev.error;
@@ -153,6 +142,7 @@ async function translateText(text, from, to) {
     return '[Translation error]';
   }
 }
+
 
 
 
