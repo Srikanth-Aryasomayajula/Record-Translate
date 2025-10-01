@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Screen Recorder with Auto-Transcription and Translation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Screen Recorder & Subtitle Translator</h1>
+    <div class="controls">
+      <button id="recordBtn">⏺️ Record Screen & Audio</button>
+      <button id="stopBtn" disabled>⏹️ Stop & Download</button>
+      <span id="status">Idle</span>
+    </div>
+    <video id="preview" controls playsinline></video>
+    <div class="subtitle-section">
+      <h2>Subtitles (Automatic Language)</h2>
+      <div id="subtitles" class="subtitle-box"></div>
+      <h2>Translation (English)</h2>
+      <div id="translations" class="subtitle-box"></div>
+    </div>
+    <a id="downloadLink" download="recording.webm" style="display:none">Download Recording</a>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f7fafd;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 700px;
+  margin: 2em auto;
+  padding: 1em 2em 2em 2em;
+  background: #fff;
+  border-radius: 13px;
+  box-shadow: 0 2px 12px rgba(30, 144, 255, 0.12);
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 2em;
+}
+
+button {
+  padding: 1em 2em;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #228be6;
+  color: white;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+button:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+#status {
+  font-size: 1.1rem;
+  margin-left: 1em;
+}
+
+video#preview {
+  display: block;
+  margin: 1em auto;
+  max-width: 100%;
+  background: #eaf3fb;
+  border-radius: 8px;
+}
+
+.subtitle-section {
+  margin: 2em auto;
+}
+
+.subtitle-box {
+  min-height: 2em;
+  margin: 1em auto 2em auto;
+  background: #f0f4fa;
+  padding: 1em;
+  border-radius: 7px;
+  font-size: 1.15em;
+  color: #111;
+  line-height: 1.4;
+  box-shadow: 0 1px 4px rgba(0,30,130,0.05);
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+a#downloadLink {
+  display: block;
+  text-align: center;
+  background: #27ae60;
+  color: white;
+  padding: 1em 2em;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1.1em;
+  margin: 2em auto 0 auto;
+  width: fit-content;
+}
+
+a#downloadLink:hover {
+  background: #219150;
+}
