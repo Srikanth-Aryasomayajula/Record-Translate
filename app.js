@@ -96,25 +96,39 @@ function initRecognition() {
   recognition.lang = recLang; // Start with German as default
 
   recognition.onresult = async function(event) {
-    let interimTranscripts = '';
+    // Collect interim text for this event only (not persisted)
+    let interimText = '';
+  
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       const res = event.results[i];
       const txt = res[0].transcript.trim();
   
       if (res.isFinal) {
+        // 1) Persist final German text
         transcription.push(txt);
-        // Always translate German to English on finalized text
-        const translated = await translateText(txt, 'de', 'en');
-        translation.push(translated);
+        // 2) Translate this final segment DE -> EN immediately
+        try {
+          const translated = await translateText(txt, 'de', 'en');
+          translation.push(translated);
+        } catch (e) {
+          translation.push('[Translation error]');
+        }
       } else {
-        interimTranscripts += txt + ' ';
+        // Accumulate interim text for display only
+        interimText += txt + ' ';
       }
     }
   
-    // Update UI just once per result event to avoid flicker
-    subtitles.textContent = transcription.join('\n') + (interimTranscripts ? '\n' + interimTranscripts.trim() : '');
+    // Update UI exactly once per event:
+    // - Subtitles: all final lines + current interim preview
+    subtitles.textContent =
+      transcription.join('\n') + (interimText ? '\n' + interimText.trim() : '');
+  
+    // - Translations: only finalized translated lines
     translations.textContent = translation.join('\n');
   };
+
+
 
 
 
@@ -144,9 +158,3 @@ async function translateText(text, from, to) {
     return '[Translation error]';
   }
 }
-
-
-
-
-
-
