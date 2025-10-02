@@ -79,20 +79,20 @@ stopBtn.onclick = function() {
 // Show Recorded Video
 function showRecording() {
   let blob = new Blob(chunks, { type: "video/webm" });
-let url = URL.createObjectURL(blob);
-preview.src = url;
-downloadLink.href = url;
+  let url = URL.createObjectURL(blob);
+  preview.src = url;
+  downloadLink.href = url;
 
-// Generate filename: DD-MM-YYYY_HH-MM-SS.webm
-let now = new Date();
-let pad = n => n.toString().padStart(2, '0');
-let filename = 
-  `${pad(now.getDate())}-${pad(now.getMonth()+1)}-${now.getFullYear()}_` +
-  `${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}.webm`;
+  // Generate filename: DD-MM-YYYY_HH-MM-SS.webm
+  let now = new Date();
+  let pad = n => n.toString().padStart(2, '0');
+  let filename = 
+    `${pad(now.getDate())}-${pad(now.getMonth()+1)}-${now.getFullYear()}_` +
+    `${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}.webm`;
 
-downloadLink.download = filename;
-downloadLink.style.display = "block";
-status.textContent = 'Done. You can download your recording below!';
+  downloadLink.download = filename;
+  downloadLink.style.display = "block";
+  status.textContent = 'Done. You can download your recording below!';
 
 }
 
@@ -196,6 +196,7 @@ async function translateText(text, from = 'auto', to = 'en') {
     return '[Translation error]';
   }
 }
+
 
 
 
