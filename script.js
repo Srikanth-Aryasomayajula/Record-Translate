@@ -31,8 +31,8 @@ recordBtn.onclick = async function() {
 
     audioStream.getAudioTracks().forEach(t =>
       t.applyConstraints({
-        echoCancellation: false,
-        noiseSuppression: false,
+        echoCancellation: true,
+        noiseSuppression: true,
         autoGainControl: false
       })
     );
@@ -54,7 +54,12 @@ recordBtn.onclick = async function() {
     const micSource = audioCtx.createMediaStreamSource(audioStream);
     
     if (systemSource) systemSource.connect(dest);
-    micSource.connect(dest);
+    //micSource.connect(dest);
+    
+    const micGain = audioCtx.createGain();
+    micGain.gain.value = 0.8; // You can tweak between 0.6–1.0
+    micSource.connect(micGain).connect(dest);
+
     
     // Final mixed stream = video from screen + mixed audio
     combinedStream = new MediaStream([
@@ -65,7 +70,7 @@ recordBtn.onclick = async function() {
     audioStream.getAudioTracks().forEach(t =>
       t.applyConstraints({ echoCancellation: false, noiseSuppression: false, autoGainControl: false })
     );
-    combinedStream.getAudioTracks().forEach(t => t.applyConstraints({ echoCancellation: false, noiseSuppression: false, autoGainControl: false }));
+    // combinedStream.getAudioTracks().forEach(t => t.applyConstraints({ echoCancellation: false, noiseSuppression: false, autoGainControl: false }));
 
     chunks = [];
     transcription = [];
@@ -225,15 +230,3 @@ async function translateText(text, from = 'auto', to = 'en') {
     return '[Translation error]';
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
