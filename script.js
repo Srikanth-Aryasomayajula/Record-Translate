@@ -28,15 +28,24 @@ function guessLang(text) {
 recordBtn.onclick = async function() {
   try {
     // Get screen and audio streams
-    screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+    screenStream = await navigator.mediaDevices.getDisplayMedia({
+      video: true,
+      audio: {
+        mandatory: {
+          chromeMediaSource: 'desktop',
+          chromeMediaSourceId: undefined
+        }
+      }
+    });
     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     // Merge streams (if system audio isn't captured, at least mic is)
     const mergedTracks = [
       ...screenStream.getVideoTracks(),
-      // Prefer screen's audio, else mic
-      ...(screenStream.getAudioTracks().length ? screenStream.getAudioTracks() : audioStream.getAudioTracks())
+      ...screenStream.getAudioTracks(),      // system audio
+      ...audioStream.getAudioTracks()        // microphone
     ];
     combinedStream = new MediaStream(mergedTracks);
+    combinedStream.getAudioTracks().forEach(t => t.applyConstraints({ echoCancellation: false, noiseSuppression: false, autoGainControl: false }));
 
     chunks = [];
     transcription = [];
@@ -196,6 +205,7 @@ async function translateText(text, from = 'auto', to = 'en') {
     return '[Translation error]';
   }
 }
+
 
 
 
