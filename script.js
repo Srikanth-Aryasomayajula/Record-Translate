@@ -201,7 +201,7 @@ function initRecognition() {
 async function translateText(text, from = 'auto', to = 'en') {
   if (!text || !text.trim()) return '';
   try {
-    const resp = await fetch('https://libretranslate.com/translate', {
+    const resp = await fetch('https://translate.argosopentech.com/translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -225,6 +225,7 @@ async function translateText(text, from = 'auto', to = 'en') {
     return '[Translation error]';
   }
 }
+
 
 
 
