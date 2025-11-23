@@ -30,21 +30,19 @@ recordBtn.onclick = async function() {
     // Get screen and audio streams
     screenStream = await navigator.mediaDevices.getDisplayMedia({
       video: true,
-      audio: {
-        mandatory: {
-          chromeMediaSource: 'desktop',
-          chromeMediaSourceId: undefined
-        }
-      }
+      audio: { systemAudio: "include" }
     });
     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     // Merge streams (if system audio isn't captured, at least mic is)
     const mergedTracks = [
       ...screenStream.getVideoTracks(),
-      ...screenStream.getAudioTracks(),      // system audio
-      ...audioStream.getAudioTracks()        // microphone
+      ...screenStream.getAudioTracks(),   // system audio
+      ...audioStream.getAudioTracks()     // microphone audio
     ];
     combinedStream = new MediaStream(mergedTracks);
+    audioStream.getAudioTracks().forEach(t =>
+      t.applyConstraints({ echoCancellation: false, noiseSuppression: false, autoGainControl: false })
+    );
     combinedStream.getAudioTracks().forEach(t => t.applyConstraints({ echoCancellation: false, noiseSuppression: false, autoGainControl: false }));
 
     chunks = [];
@@ -205,6 +203,7 @@ async function translateText(text, from = 'auto', to = 'en') {
     return '[Translation error]';
   }
 }
+
 
 
 
