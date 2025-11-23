@@ -43,13 +43,25 @@ recordBtn.onclick = async function() {
       audio: { systemAudio: "include" }
     });
     
-    // Merge streams (if system audio isn't captured, at least mic is)
-    const mergedTracks = [
+    // --- MIX SYSTEM + MIC AUDIO INTO ONE TRACK ---
+    const audioCtx = new AudioContext();
+    const dest = audioCtx.createMediaStreamDestination();
+    
+    const systemSource = screenStream.getAudioTracks().length
+      ? audioCtx.createMediaStreamSource(screenStream)
+      : null;
+    
+    const micSource = audioCtx.createMediaStreamSource(audioStream);
+    
+    if (systemSource) systemSource.connect(dest);
+    micSource.connect(dest);
+    
+    // Final mixed stream = video from screen + mixed audio
+    combinedStream = new MediaStream([
       ...screenStream.getVideoTracks(),
-      ...screenStream.getAudioTracks(),   // system audio
-      ...audioStream.getAudioTracks()     // microphone audio
-    ];
-    combinedStream = new MediaStream(mergedTracks);
+      ...dest.stream.getAudioTracks()     // <-- one mixed track
+    ]);
+    
     audioStream.getAudioTracks().forEach(t =>
       t.applyConstraints({ echoCancellation: false, noiseSuppression: false, autoGainControl: false })
     );
@@ -213,6 +225,7 @@ async function translateText(text, from = 'auto', to = 'en') {
     return '[Translation error]';
   }
 }
+
 
 
 
