@@ -29,6 +29,14 @@ recordBtn.onclick = async function() {
   try {
     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
+    audioStream.getAudioTracks().forEach(t =>
+      t.applyConstraints({
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false
+      })
+    );
+
     // Get screen and audio streams
     screenStream = await navigator.mediaDevices.getDisplayMedia({
       video: true,
@@ -205,6 +213,7 @@ async function translateText(text, from = 'auto', to = 'en') {
     return '[Translation error]';
   }
 }
+
 
 
 
