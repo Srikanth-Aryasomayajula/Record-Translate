@@ -76,8 +76,8 @@ recordBtn.onclick = async function() {
     transcription = [];
     translation = [];
     langDetected = '';
-    subtitles.textContent = '';
-    translations.textContent = '';
+    // subtitles.textContent = '';
+    // translations.textContent = '';
     downloadLink.style.display = "none";
     status.textContent = 'Recording...';
 
@@ -231,4 +231,5 @@ async function translateText(text, from = 'auto', to = 'en') {
     return '[Translation error]';
   }
 } */
+
 
