@@ -14,8 +14,8 @@ const recordBtn = document.getElementById('recordBtn');
 const stopBtn = document.getElementById('stopBtn');
 const status = document.getElementById('status');
 const preview = document.getElementById('preview');
-const subtitles = document.getElementById('subtitles');
-const translations = document.getElementById('translations');
+// const subtitles = document.getElementById('subtitles');
+// const translations = document.getElementById('translations');
 const downloadLink = document.getElementById('downloadLink');
 
 // Returns the best language code for recognition based on given phrase (heuristic)
@@ -231,5 +231,6 @@ async function translateText(text, from = 'auto', to = 'en') {
     return '[Translation error]';
   }
 } */
+
 
 
