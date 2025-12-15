@@ -202,6 +202,7 @@ function initRecognition() {
   recognition.start();
 }
 
+/*
 // LibreTranslate API for translation (de→en)
 async function translateText(text, from = 'auto', to = 'en') {
   if (!text || !text.trim()) return '';
@@ -229,4 +230,5 @@ async function translateText(text, from = 'auto', to = 'en') {
     console.error('Translate fetch error', e);
     return '[Translation error]';
   }
-}
+} */
+
